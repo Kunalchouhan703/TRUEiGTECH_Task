@@ -97,5 +97,5 @@ You can test the APIs using:
 4. View your feed
 5. Like and comment on posts
 
-Enjoy building! 🚀
+Enjoy building! 
 

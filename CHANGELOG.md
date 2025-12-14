@@ -1,42 +1,42 @@
 # Changelog - New Features Added
 
-## ✅ All Requested Features Implemented
+##  All Requested Features Implemented
 
 ### 1. Fixed Profile Posts Display
-- ✅ Posts now properly display in profile section
-- ✅ Added error handling for missing images
-- ✅ Posts show with proper grid layout
+-  Posts now properly display in profile section
+-  Added error handling for missing images
+-  Posts show with proper grid layout
 
 ### 2. Photo Upload from Device
-- ✅ Added multer middleware for file uploads
-- ✅ Created uploads directory for storing images
-- ✅ Updated CreatePost page with file upload option
-- ✅ Users can now choose between:
+-  Added multer middleware for file uploads
+-  Created uploads directory for storing images
+-  Updated CreatePost page with file upload option
+-  Users can now choose between:
    - Upload from device (file picker)
    - Use image URL (existing method)
-- ✅ Image preview before posting
-- ✅ File validation (image types only, 5MB max)
+-  Image preview before posting
+-  File validation (image types only, 5MB max)
 
 ### 3. Like and Follow Buttons Visibility
-- ✅ Like buttons visible on all posts in Feed
-- ✅ Follow/Unfollow button visible on user profiles
-- ✅ Like status properly tracked (shows ❤️ if liked, 🤍 if not)
-- ✅ Follow status shown in search results
+-  Like buttons visible on all posts in Feed
+-  Follow/Unfollow button visible on user profiles
+-  Like status properly tracked (shows ❤️ if liked, 🤍 if not)
+-  Follow status shown in search results
 
 ### 4. Search Functionality
-- ✅ New Search page added
-- ✅ Search users by username (case-insensitive, partial match)
-- ✅ Real-time search with debouncing
-- ✅ Follow/Unfollow directly from search results
-- ✅ Navigate to user profiles from search
-- ✅ Search link added to navbar
+-  New Search page added
+-  Search users by username (case-insensitive, partial match)
+-  Real-time search with debouncing
+-  Follow/Unfollow directly from search results
+-  Navigate to user profiles from search
+-  Search link added to navbar
 
 ### 5. Followers/Following Lists
-- ✅ Click on followers/following count to view lists
-- ✅ Modal popup showing all followers
-- ✅ Modal popup showing all following
-- ✅ Click on any user to navigate to their profile
-- ✅ Lists show user avatars and usernames
+-  Click on followers/following count to view lists
+-  Modal popup showing all followers
+-  Modal popup showing all following
+-  Click on any user to navigate to their profile
+-  Lists show user avatars and usernames
 
 ## Technical Changes
 
