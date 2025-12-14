@@ -1,0 +1,838 @@
+{
+	"info": {
+		"_postman_id": "instagram-clone-api",
+		"name": "Instagram Clone API",
+		"description": "Complete API collection for Instagram Mini Clone\n\n## Setup Instructions\n\n1. Import this collection into Postman\n2. Create an environment with the following variables:\n   - `base_url`: http://localhost:5000/api\n   - `token`: (will be set automatically after login)\n3. Run the Signup or Login request first to get your token\n4. The token will be automatically saved to the environment\n\n## Authentication\n\nMost endpoints require authentication. Use the token from login/signup in the Authorization header as:\n`Bearer {{token}}`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('token', response.token);",
+									"    pm.environment.set('user_id', response.user.id);",
+									"    console.log('Token saved:', response.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"johndoe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Create a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('token', response.token);",
+									"    pm.environment.set('user_id', response.user.id);",
+									"    console.log('Token saved:', response.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email and password"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user signup and login"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:userId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{user_id}}",
+									"description": "User ID to get profile for"
+								}
+							]
+						},
+						"description": "Get user profile information including followers, following, bio, and profile photo"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "newusername",
+									"type": "text"
+								},
+								{
+									"key": "bio",
+									"value": "This is my bio",
+									"type": "text"
+								},
+								{
+									"key": "profilePhoto",
+									"type": "file",
+									"src": [],
+									"description": "Profile photo image file"
+								},
+								{
+									"key": "type",
+									"value": "profile",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						},
+						"description": "Update current user's profile (username, bio, profile photo)"
+					},
+					"response": []
+				},
+				{
+					"name": "Follow User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:targetUserId/follow",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":targetUserId",
+								"follow"
+							],
+							"variable": [
+								{
+									"key": "targetUserId",
+									"value": "",
+									"description": "User ID to follow"
+								}
+							]
+						},
+						"description": "Follow a user"
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:targetUserId/unfollow",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":targetUserId",
+								"unfollow"
+							],
+							"variable": [
+								{
+									"key": "targetUserId",
+									"value": "",
+									"description": "User ID to unfollow"
+								}
+							]
+						},
+						"description": "Unfollow a user"
+					},
+					"response": []
+				}
+			],
+			"description": "User-related endpoints"
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create Post (URL)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"imageUrl\": \"https://example.com/image.jpg\",\n    \"caption\": \"This is my first post!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts"
+							]
+						},
+						"description": "Create a new post using image URL"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post (File Upload)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"description": "Image file to upload"
+								},
+								{
+									"key": "caption",
+									"value": "This is my post with uploaded image",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts"
+							]
+						},
+						"description": "Create a new post by uploading an image file"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/:postId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID"
+								}
+							]
+						},
+						"description": "Get a single post by ID with all details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Posts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/user/:userId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								"user",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{user_id}}",
+									"description": "User ID to get posts for"
+								}
+							]
+						},
+						"description": "Get all posts created by a specific user"
+					},
+					"response": []
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/:postId/like",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId",
+								"like"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID to like"
+								}
+							]
+						},
+						"description": "Like a post"
+					},
+					"response": []
+				},
+				{
+					"name": "Unlike Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/:postId/unlike",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId",
+								"unlike"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID to unlike"
+								}
+							]
+						},
+						"description": "Unlike a post"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Great post!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/posts/:postId/comment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId",
+								"comment"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID to comment on"
+								}
+							]
+						},
+						"description": "Add a comment to a post"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Comments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/:postId/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID to get comments for"
+								}
+							]
+						},
+						"description": "Get all comments for a post"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/comments/:commentId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								"comments",
+								":commentId"
+							],
+							"variable": [
+								{
+									"key": "commentId",
+									"value": "",
+									"description": "Comment ID to delete"
+								}
+							]
+						},
+						"description": "Delete a comment (only comment owner or post owner can delete)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post Caption",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"caption\": \"Updated caption text\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/posts/:postId/caption",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId",
+								"caption"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID to update caption for"
+								}
+							]
+						},
+						"description": "Update post caption (only post owner can update)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/:postId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "",
+									"description": "Post ID to delete"
+								}
+							]
+						},
+						"description": "Delete a post and all its comments (only post owner can delete)"
+					},
+					"response": []
+				}
+			],
+			"description": "Post-related endpoints"
+		},
+		{
+			"name": "Feed",
+			"item": [
+				{
+					"name": "Get Feed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/feed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"feed"
+							]
+						},
+						"description": "Get feed - posts from users that the current user follows"
+					},
+					"response": []
+				}
+			],
+			"description": "Feed endpoints"
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "Search Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/search/users?query=:query",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"search",
+								"users"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": ":query",
+									"description": "Username to search for",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "query",
+									"value": "john",
+									"description": "Search query (username)"
+								}
+							]
+						},
+						"description": "Search users by username (case-insensitive, partial match)"
+					},
+					"response": []
+				}
+			],
+			"description": "Search endpoints"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check if server is running"
+					},
+					"response": []
+				}
+			],
+			"description": "Health check endpoint"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+
