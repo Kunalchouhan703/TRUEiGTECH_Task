@@ -4,14 +4,14 @@ A complete Instagram Mini Clone built with Node.js backend and React frontend.
 
 ## Features
 
-- ✅ User authentication (Signup/Login with JWT)
-- ✅ Follow/Unfollow users
-- ✅ Create posts with image URL and caption
-- ✅ Like/Unlike posts
-- ✅ Add comments to posts
-- ✅ Feed showing posts from followed users only
-- ✅ User profiles with posts, followers, and following counts
-- ✅ Clean, modern UI
+-  User authentication (Signup/Login with JWT)
+-  Follow/Unfollow users
+-  Create posts with image URL and caption
+-  Like/Unlike posts
+-  Add comments to posts
+-  Feed showing posts from followed users only
+-  User profiles with posts, followers, and following counts
+-  Clean, modern UI
 
 ## Tech Stack
 
@@ -242,13 +242,13 @@ curl -X POST http://localhost:5000/api/posts/<post-id>/comment \
 - Referential integrity maintained
 
 ### Edge Cases Handled
-- ✅ Duplicate likes prevented
-- ✅ Can't follow yourself
-- ✅ Can't follow same user twice
-- ✅ Can't like same post twice
-- ✅ Proper error handling for all routes
-- ✅ Input validation
-- ✅ Authentication checks on protected routes
+-  Duplicate likes prevented
+-  Can't follow yourself
+-  Can't follow same user twice
+-  Can't like same post twice
+-  Proper error handling for all routes
+-  Input validation
+-  Authentication checks on protected routes
 
 ### Feed Optimization
 - Only shows posts from users you follow
