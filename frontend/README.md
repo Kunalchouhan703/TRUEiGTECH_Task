@@ -1,22 +1,7 @@
-# Instagram Clone Frontend
+Frontend Application Documentation
 
-React frontend for Instagram Mini Clone.
+This is the user interface part of the Instagram clone. It's built with React and provides all the visual components and user interactions.
 
-## Setup
+Getting Started
 
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Start development server:
-```bash
-npm run dev
-```
-
-The app will run on http://localhost:3000
-
-## Environment
-
-Make sure the backend is running on http://localhost:5000
-
+Run npm install to install all dependencies. Start the development server with npm run dev. The application will be available in your browser. Make sure the backend server is running on the expected port for the frontend to work properly.

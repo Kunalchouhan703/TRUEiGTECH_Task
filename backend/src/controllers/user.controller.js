@@ -20,7 +20,11 @@ export const followUser = async (req, res) => {
 
     const currentUser = await User.findById(userId);
 
-    if (currentUser.following.includes(targetUserId)) {
+    const isAlreadyFollowing = currentUser.following.some(
+      id => id.toString() === targetUserId
+    );
+
+    if (isAlreadyFollowing) {
       return res.status(400).json({ 
         message: 'You are already following this user' 
       });
@@ -29,8 +33,14 @@ export const followUser = async (req, res) => {
     currentUser.following.push(targetUserId);
     await currentUser.save();
 
-    targetUser.followers.push(userId);
-    await targetUser.save();
+    const isAlreadyFollower = targetUser.followers.some(
+      id => id.toString() === userId
+    );
+
+    if (!isAlreadyFollower) {
+      targetUser.followers.push(userId);
+      await targetUser.save();
+    }
 
     res.status(200).json({ 
       message: 'Successfully followed user' 

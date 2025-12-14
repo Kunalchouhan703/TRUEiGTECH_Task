@@ -1,285 +1,35 @@
-# Instagram Mini Clone
+Instagram Clone Project
 
-A complete Instagram Mini Clone built with Node.js backend and React frontend.
+This is a social media application similar to Instagram where users can share photos, follow each other, and interact with posts. The project consists of two main parts - a backend server built with Node.js and a frontend interface built with React.
 
-## Features
+What This App Does
 
--  User authentication (Signup/Login with JWT)
--  Follow/Unfollow users
--  Create posts with image URL and caption
--  Like/Unlike posts
--  Add comments to posts
--  Feed showing posts from followed users only
--  User profiles with posts, followers, and following counts
--  Clean, modern UI
+Users can create accounts and log in securely. Once logged in, they can upload photos with captions, follow other users, like posts, and leave comments. The feed shows posts from people you follow. You can create and view stories that expire after 24 hours. Stories can be saved as highlights on your profile. You can search for users with search history tracking. The application includes sidebars with stories feed and user suggestions. You can share posts as stories. Profile editing allows updating username, bio, and profile photo.
 
-## Tech Stack
+Technology Used
 
-### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- JWT Authentication
-- bcrypt for password hashing
-- CORS enabled
+The backend uses Node.js with Express framework to handle all the server logic. It connects to MongoDB database to store user information, posts, and comments. Authentication is handled using JWT tokens. The frontend is built with React using Vite for fast development. It uses Axios to communicate with the backend API.
 
-### Frontend
-- React (Vite)
-- React Router
-- Axios for API calls
-- Custom CSS (no heavy UI libraries)
+Project Organization
 
-## Project Structure
+The code is organized into two main folders. The backend folder contains all server-side code including database models, API routes, and business logic. The frontend folder contains the React application with pages, components, and styling.
 
-```
-ig clone/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── db.js
-│   │   ├── models/
-│   │   │   ├── User.js
-│   │   │   ├── Post.js
-│   │   │   └── Comment.js
-│   │   ├── controllers/
-│   │   │   ├── auth.controller.js
-│   │   │   ├── user.controller.js
-│   │   │   ├── post.controller.js
-│   │   │   └── feed.controller.js
-│   │   ├── routes/
-│   │   │   ├── auth.routes.js
-│   │   │   ├── user.routes.js
-│   │   │   ├── post.routes.js
-│   │   │   └── feed.routes.js
-│   │   ├── middleware/
-│   │   │   └── auth.middleware.js
-│   │   ├── app.js
-│   │   └── server.js
-│   ├── package.json
-│   └── README.md
-│
-└── frontend/
-    ├── src/
-    │   ├── api/
-    │   │   └── axios.js
-    │   ├── pages/
-    │   │   ├── Login.jsx
-    │   │   ├── Signup.jsx
-    │   │   ├── Feed.jsx
-    │   │   ├── CreatePost.jsx
-    │   │   └── Profile.jsx
-    │   ├── components/
-    │   │   └── Navbar.jsx
-    │   ├── App.jsx
-    │   ├── main.jsx
-    │   └── index.css
-    ├── package.json
-    └── README.md
-```
+Getting Started
 
-## Setup Instructions
+First, make sure you have Node.js installed on your computer. You also need MongoDB running either locally or through a cloud service like MongoDB Atlas.
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (running locally or MongoDB Atlas)
-- npm or yarn
+To set up the backend, navigate to the backend folder and run npm install to get all required packages. Create a file named .env and add your database connection string and a secret key for JWT tokens. Then start the server with npm start.
 
-### Backend Setup
+For the frontend, go to the frontend folder and run npm install. Then start the development server with npm run dev. The application will open in your browser.
 
-1. Navigate to backend directory:
-```bash
-cd backend
-```
+How to Use
 
-2. Install dependencies:
-```bash
-npm install
-```
+After starting both servers, open the application in your browser. Create a new account by providing a username, email, and password. Once logged in, you can create posts by uploading images or providing image URLs. You can search for other users and follow them to see their posts in your feed. Click on posts to like them or add comments. Visit profiles to see all posts from a specific user.
 
-3. Create `.env` file in the backend directory:
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/instagram-clone
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-NODE_ENV=development
-```
+API Information
 
-4. Make sure MongoDB is running on your system.
+The backend provides several API endpoints. Authentication endpoints allow users to sign up and log in. User endpoints let you view profiles, manage follow relationships, and update profile information. Post endpoints handle creating posts, liking, commenting, sharing as stories, editing captions, and deleting posts. Story endpoints manage story creation, viewing, and deletion. Highlight endpoints allow converting stories to permanent highlights. Feed endpoint returns posts from users you follow. Search endpoints help find users and get suggestions. All endpoints except authentication require a valid JWT token in the request headers.
 
-5. Start the backend server:
-```bash
-npm start
-```
+Important Notes
 
-For development with auto-reload:
-```bash
-npm run dev
-```
-
-The backend will run on `http://localhost:5000`
-
-### Frontend Setup
-
-1. Navigate to frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-The frontend will run on `http://localhost:3000`
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/signup` - Sign up a new user
-- `POST /api/auth/login` - Log in an existing user
-
-### Users
-- `GET /api/users/:userId` - Get user profile
-- `POST /api/users/:targetUserId/follow` - Follow a user
-- `POST /api/users/:targetUserId/unfollow` - Unfollow a user
-
-### Posts
-- `POST /api/posts` - Create a new post
-- `GET /api/posts/user/:userId` - Get all posts by a user
-- `POST /api/posts/:postId/like` - Like a post
-- `POST /api/posts/:postId/unlike` - Unlike a post
-- `POST /api/posts/:postId/comment` - Add a comment to a post
-- `GET /api/posts/:postId/comments` - Get all comments for a post
-
-### Feed
-- `GET /api/feed` - Get feed (posts from users you follow)
-
-**Note:** All routes except `/api/auth/*` require authentication. Include the JWT token in the Authorization header:
-```
-Authorization: Bearer <your-token>
-```
-
-## Example API Requests
-
-### Signup
-```bash
-curl -X POST http://localhost:5000/api/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "johndoe",
-    "email": "john@example.com",
-    "password": "password123"
-  }'
-```
-
-### Login
-```bash
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john@example.com",
-    "password": "password123"
-  }'
-```
-
-### Create Post (requires auth token)
-```bash
-curl -X POST http://localhost:5000/api/posts \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-token>" \
-  -d '{
-    "imageUrl": "https://example.com/image.jpg",
-    "caption": "My first post!"
-  }'
-```
-
-### Get Feed (requires auth token)
-```bash
-curl -X GET http://localhost:5000/api/feed \
-  -H "Authorization: Bearer <your-token>"
-```
-
-### Follow User (requires auth token)
-```bash
-curl -X POST http://localhost:5000/api/users/<target-user-id>/follow \
-  -H "Authorization: Bearer <your-token>"
-```
-
-### Like Post (requires auth token)
-```bash
-curl -X POST http://localhost:5000/api/posts/<post-id>/like \
-  -H "Authorization: Bearer <your-token>"
-```
-
-### Add Comment (requires auth token)
-```bash
-curl -X POST http://localhost:5000/api/posts/<post-id>/comment \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-token>" \
-  -d '{
-    "text": "Great post!"
-  }'
-```
-
-## Features Implementation
-
-### Authentication
-- Passwords are hashed using bcrypt before storing
-- JWT tokens are generated on successful login/signup
-- Tokens expire after 7 days
-- Protected routes verify JWT token
-
-### Database Design
-- **User Schema**: username, email, password (hashed), followers, following arrays
-- **Post Schema**: user reference, imageUrl, caption, likes array, createdAt
-- **Comment Schema**: user reference, post reference, text, createdAt
-- Proper indexes for efficient querying
-- Referential integrity maintained
-
-### Edge Cases Handled
--  Duplicate likes prevented
--  Can't follow yourself
--  Can't follow same user twice
--  Can't like same post twice
--  Proper error handling for all routes
--  Input validation
--  Authentication checks on protected routes
-
-### Feed Optimization
-- Only shows posts from users you follow
-- Latest posts first
-- Efficient MongoDB queries with indexes
-- Limited to 50 posts for performance
-
-## Running the Application
-
-1. Start MongoDB (if running locally)
-2. Start the backend server:
-   ```bash
-   cd backend
-   npm start
-   ```
-3. Start the frontend server (in a new terminal):
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-4. Open `http://localhost:3000` in your browser
-
-## Notes
-
-- Make sure MongoDB is running before starting the backend
-- Change the JWT_SECRET in production
-- The frontend expects the backend to run on port 5000
-- Image URLs should be publicly accessible for posts
-- All API responses follow consistent JSON format
-
-## License
-
-This project is for educational purposes.
-
+Make sure MongoDB is running before starting the backend server. The JWT secret key should be changed in production environments. The frontend expects the backend to run on port 5000 by default. Image URLs used in posts must be publicly accessible. All API responses follow a consistent JSON format for easy handling.

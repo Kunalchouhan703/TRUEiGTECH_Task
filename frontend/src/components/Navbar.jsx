@@ -20,7 +20,7 @@ const Navbar = () => {
         <div className="nav-links">
           <Link to="/feed" className="nav-link">Feed</Link>
           <Link to="/search" className="nav-link">Search</Link>
-          <Link to="/create-post" className="nav-link">Create Post</Link>
+          <Link to="/create-post" className="nav-link">Create</Link>
           {user.id && (
             <Link to={`/profile/${user.id}`} className="nav-link">
               Profile

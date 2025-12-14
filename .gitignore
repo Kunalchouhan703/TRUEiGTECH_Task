@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
-package-lock.json
+
+# Keep package-lock.json for dependency tracking
+!backend/package-lock.json
+!frontend/package-lock.json
 
 # Environment variables
 .env

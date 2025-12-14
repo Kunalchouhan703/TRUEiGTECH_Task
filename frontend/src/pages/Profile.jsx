@@ -19,12 +19,16 @@ const Profile = () => {
   const [editProfilePhoto, setEditProfilePhoto] = useState(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState(null);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [highlights, setHighlights] = useState([]);
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const isOwnProfile = (currentUser.id || currentUser._id) === userId;
 
   useEffect(() => {
     fetchProfile();
     fetchPosts();
+    if (isOwnProfile) {
+      fetchHighlights();
+    }
   }, [userId]);
 
   const fetchProfile = async () => {
@@ -53,6 +57,16 @@ const Profile = () => {
     }
   };
 
+  const fetchHighlights = async () => {
+    try {
+      const response = await api.get(`/highlights/user/${userId}`);
+      setHighlights(response.data.highlights || []);
+    } catch (err) {
+      console.error('Failed to load highlights:', err);
+      setHighlights([]);
+    }
+  };
+
   const handleFollow = async () => {
     if (loadingAction) return;
 
@@ -60,21 +74,13 @@ const Profile = () => {
       setLoadingAction(true);
       if (isFollowing) {
         await api.post(`/users/${userId}/unfollow`);
-        setIsFollowing(false);
-        setProfile(prev => ({
-          ...prev,
-          followersCount: prev.followersCount - 1
-        }));
       } else {
         await api.post(`/users/${userId}/follow`);
-        setIsFollowing(true);
-        setProfile(prev => ({
-          ...prev,
-          followersCount: prev.followersCount + 1
-        }));
       }
+      await fetchProfile();
     } catch (err) {
       console.error('Failed to follow/unfollow:', err);
+      alert(err.response?.data?.message || 'Failed to follow/unfollow user');
     } finally {
       setLoadingAction(false);
     }
@@ -149,7 +155,11 @@ const Profile = () => {
   }
 
   if (error || !profile) {
-    return <div className="error-message">{error || 'Profile not found'}</div>;
+    return (
+      <div className="feed-container">
+        <div className="error-message" style={{ marginTop: '20px' }}>{error || 'Profile not found'}</div>
+      </div>
+    );
   }
 
   return (
@@ -187,14 +197,14 @@ const Profile = () => {
               style={{ cursor: 'pointer' }}
               onClick={() => setShowFollowers(true)}
             >
-              <span className="profile-stat-number">{profile.followersCount || 0}</span> followers
+              <span className="profile-stat-number">{profile.followers?.length || profile.followersCount || 0}</span> followers
             </div>
             <div
               className="profile-stat"
               style={{ cursor: 'pointer' }}
               onClick={() => setShowFollowing(true)}
             >
-              <span className="profile-stat-number">{profile.followingCount || 0}</span> following
+              <span className="profile-stat-number">{profile.following?.length || profile.followingCount || 0}</span> following
             </div>
           </div>
           {!isOwnProfile && (
@@ -230,6 +240,49 @@ const Profile = () => {
           )}
         </div>
       </div>
+      {isOwnProfile && highlights.length > 0 && (
+        <div style={{ marginBottom: '44px', borderBottom: '1px solid #dbdbdb', paddingBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '8px 0' }}>
+            {highlights.map(highlight => (
+              <div
+                key={highlight.id}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  minWidth: '80px',
+                  cursor: 'pointer'
+                }}
+                onClick={() => navigate(`/highlights/${highlight.id}`)}
+              >
+                <div
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '50%',
+                    background: highlight.coverImage ? `url(${highlight.coverImage})` : '#dbdbdb',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    border: '2px solid #dbdbdb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px',
+                    color: 'white',
+                    fontWeight: '600'
+                  }}
+                >
+                  {!highlight.coverImage && '📌'}
+                </div>
+                <div style={{ fontSize: '12px', color: '#262626', textAlign: 'center' }}>
+                  {highlight.title}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {posts.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-title">No posts yet</div>
@@ -256,7 +309,6 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Followers Modal */}
       {showFollowers && (
         <div className="modal-overlay" onClick={() => setShowFollowers(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -309,7 +361,6 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Following Modal */}
       {showFollowing && (
         <div className="modal-overlay" onClick={() => setShowFollowing(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -362,65 +413,39 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Edit Profile Modal */}
       {showEditProfile && (
         <div className="modal-overlay" onClick={() => setShowEditProfile(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2>Edit Profile</h2>
-              <button onClick={() => setShowEditProfile(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
-            </div>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit Profile</h2>
+            <button className="modal-close-button" onClick={() => setShowEditProfile(false)}>
+              ×
+            </button>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {/* Profile Photo */}
-              <div className="form-group">
-                <label className="form-label">Profile Photo</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <div
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      borderRadius: '50%',
-                      background: '#dbdbdb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '36px',
-                      fontWeight: '600',
-                      color: 'white',
-                      overflow: 'hidden',
-                      flexShrink: 0
-                    }}
-                  >
-                    {profilePhotoPreview ? (
-                      <img
-                        src={profilePhotoPreview}
-                        alt="Preview"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover'
-                        }}
-                      />
-                    ) : (
-                      getInitials(editUsername)
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePhotoChange}
-                      style={{ fontSize: '14px' }}
+            <div className="edit-profile-form">
+              <div className="edit-profile-photo-container">
+                <div className="edit-profile-photo-preview">
+                  {profilePhotoPreview ? (
+                    <img
+                      src={profilePhotoPreview}
+                      alt="Preview"
                     />
-                    <div style={{ fontSize: '12px', color: '#8e8e8e', marginTop: '4px' }}>
-                      JPG, PNG or GIF. Max size 5MB
-                    </div>
+                  ) : (
+                    getInitials(editUsername)
+                  )}
+                </div>
+                <div className="edit-profile-file-input">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePhotoChange}
+                    style={{ fontSize: '14px', width: '100%' }}
+                  />
+                  <div className="edit-profile-file-hint">
+                    JPG, PNG or GIF. Max size 5MB
                   </div>
                 </div>
               </div>
 
-              {/* Username */}
               <div className="form-group">
                 <label className="form-label">Username</label>
                 <input
@@ -433,7 +458,6 @@ const Profile = () => {
                 />
               </div>
 
-              {/* Bio */}
               <div className="form-group">
                 <label className="form-label">Bio</label>
                 <textarea
@@ -449,14 +473,22 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Save Button */}
-              <button
-                className="submit-button"
-                onClick={handleSaveProfile}
-                disabled={savingProfile || !editUsername.trim()}
-              >
-                {savingProfile ? 'Saving...' : 'Save Changes'}
-              </button>
+              <div className="edit-profile-actions">
+                <button
+                  className="edit-profile-cancel"
+                  onClick={() => setShowEditProfile(false)}
+                  disabled={savingProfile}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="edit-profile-save"
+                  onClick={handleSaveProfile}
+                  disabled={savingProfile || !editUsername.trim()}
+                >
+                  {savingProfile ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

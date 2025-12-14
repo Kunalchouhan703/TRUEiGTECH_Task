@@ -11,7 +11,8 @@ import {
   getUserPosts,
   getPostById,
   deletePost,
-  updatePostCaption
+  updatePostCaption,
+  sharePostAsStory
 } from '../controllers/post.controller.js';
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.use(authenticate);
 router.post('/', upload.single('image'), createPost);
 router.get('/user/:userId', getUserPosts);
 router.delete('/comments/:commentId', deleteComment);
+router.post('/:postId/share-story', sharePostAsStory);
 router.get('/:postId/comments', getComments);
 router.put('/:postId/caption', updatePostCaption);
 router.post('/:postId/like', likePost);

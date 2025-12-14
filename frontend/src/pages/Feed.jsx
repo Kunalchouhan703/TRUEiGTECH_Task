@@ -112,7 +112,11 @@ const Feed = () => {
   }
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return (
+      <div className="feed-container">
+        <div className="error-message" style={{ marginTop: '20px' }}>{error}</div>
+      </div>
+    );
   }
 
   if (posts.length === 0) {
@@ -154,6 +158,23 @@ const Feed = () => {
               onClick={() => handleLike(post.id, post.isLiked)}
             >
               {post.isLiked ? '❤️' : '🤍'}
+            </button>
+            <button
+              className="post-action-button share-button"
+              onClick={async () => {
+                try {
+                  await api.post(`/posts/${post.id}/share-story`);
+                  alert('Post shared as story!');
+                } catch (err) {
+                  console.error('Failed to share as story:', err);
+                }
+              }}
+              title="Share"
+            >
+              <svg aria-label="Share Post" className="share-icon" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
+                <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="22" x2="9.218" y1="3" y2="10.082"></line>
+                <polygon fill="none" points="11.698 20.334 22 3 2 3 9.218 10.084 11.698 20.334" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></polygon>
+              </svg>
             </button>
           </div>
           {post.likesCount > 0 && (

@@ -1,127 +1,63 @@
-# Changelog - New Features Added
+Project Updates and Changes
 
-##  All Requested Features Implemented
+All requested features have been successfully implemented and are working as expected.
 
-### 1. Fixed Profile Posts Display
--  Posts now properly display in profile section
--  Added error handling for missing images
--  Posts show with proper grid layout
+Profile Posts Display
 
-### 2. Photo Upload from Device
--  Added multer middleware for file uploads
--  Created uploads directory for storing images
--  Updated CreatePost page with file upload option
--  Users can now choose between:
-   - Upload from device (file picker)
-   - Use image URL (existing method)
--  Image preview before posting
--  File validation (image types only, 5MB max)
+Posts now appear correctly in user profiles. Error handling has been added for cases where images might not load. Posts are displayed in a clean grid layout that looks professional.
 
-### 3. Like and Follow Buttons Visibility
--  Like buttons visible on all posts in Feed
--  Follow/Unfollow button visible on user profiles
--  Like status properly tracked (shows ❤️ if liked, 🤍 if not)
--  Follow status shown in search results
+Photo Upload Feature
 
-### 4. Search Functionality
--  New Search page added
--  Search users by username (case-insensitive, partial match)
--  Real-time search with debouncing
--  Follow/Unfollow directly from search results
--  Navigate to user profiles from search
--  Search link added to navbar
+Users can now upload photos directly from their devices. The system supports file uploads through a middleware component. An uploads directory is automatically created for storing images. The create post page includes options for both device uploads and image URLs. Users can preview images before posting. File validation ensures only image files under 5MB are accepted.
 
-### 5. Followers/Following Lists
--  Click on followers/following count to view lists
--  Modal popup showing all followers
--  Modal popup showing all following
--  Click on any user to navigate to their profile
--  Lists show user avatars and usernames
+Like and Follow Functionality
 
-## Technical Changes
+Like buttons are visible on all posts in the feed. Follow and unfollow buttons appear on user profiles. The like status is properly tracked and displayed. Follow status is shown in search results for easy reference.
 
-### Backend
-- Added `multer` package for file uploads
-- Created `upload.middleware.js` for handling file uploads
-- Created `search.controller.js` for user search
-- Created `search.routes.js` for search endpoints
-- Updated `post.controller.js` to support file uploads
-- Updated `user.controller.js` to return `isFollowing` status
-- Updated `post.controller.js` to return `isLiked` status for profile posts
-- Added static file serving for uploaded images (`/uploads` route)
-- Created `uploads/` directory for storing images
+Search Capabilities
 
-### Frontend
-- Updated `CreatePost.jsx` with file upload UI
-- Created new `Search.jsx` page
-- Updated `Profile.jsx` with followers/following modals
-- Updated `Navbar.jsx` with Search link
-- Updated `App.jsx` with Search route
-- Updated `axios.js` to handle FormData (file uploads)
-- Added modal styles to `index.css`
+A dedicated search page has been added to the application. Users can search for other users by username with case-insensitive matching. Search results update in real-time as you type. Users can follow or unfollow directly from search results. Clicking on a user takes you to their profile. A search link has been added to the navigation bar.
 
-## API Endpoints Added
+Followers and Following Lists
 
-### Search
-- `GET /api/search/users?query=<username>` - Search users by username
+Clicking on follower or following counts opens a modal with the full list. The modal displays user avatars and usernames. You can click on any user in the list to visit their profile. The lists are scrollable for accounts with many connections.
 
-### File Upload
-- `POST /api/posts` - Now accepts both:
-  - JSON with `imageUrl` (existing)
-  - FormData with `image` file (new)
+Technical Implementation Details
 
-## How to Use New Features
+The backend now includes file upload handling using the multer package. A new middleware handles file uploads and validation. Search functionality has been added with dedicated controller and routes. The post controller supports both file uploads and image URLs. User controller returns follow status information. Post controller provides like status for profile posts. Static file serving allows uploaded images to be accessed. An uploads directory is automatically created for file storage.
 
-### Upload Photo from Device
-1. Go to "Create Post"
-2. Click "Upload from Device" button
-3. Select an image file
-4. Preview will appear
-5. Add caption and submit
+Frontend Updates
 
-### Search Users
-1. Click "Search" in navbar
-2. Type username in search box
-3. Results appear in real-time
-4. Click "Follow" to follow a user
-5. Click on user to view their profile
+The create post page now includes file upload interface. A new search page component has been created. Profile page includes modals for followers and following. Navigation bar includes a search link. Routing has been updated to include the search page. Axios configuration handles file uploads properly. Modal styles have been added to the CSS.
 
-### View Followers/Following
-1. Go to any user's profile
-2. Click on "followers" or "following" count
-3. Modal shows the list
-4. Click on any user to visit their profile
+New API Endpoints
 
-### Like Posts
-1. Like buttons (🤍) visible on all posts in Feed
-2. Click to like (changes to ❤️)
-3. Click again to unlike
-4. Like count updates in real-time
+A search endpoint allows finding users by username. The post creation endpoint now accepts both JSON with image URLs and FormData with file uploads.
 
-## File Structure Updates
+How to Use New Features
 
-```
-backend/
-├── src/
-│   ├── middleware/
-│   │   ├── upload.middleware.js (NEW)
-│   ├── controllers/
-│   │   ├── search.controller.js (NEW)
-│   ├── routes/
-│   │   ├── search.routes.js (NEW)
-│   └── uploads/ (NEW - created automatically)
+To upload a photo from your device, go to the create post page, click the upload from device button, select an image file, review the preview, add a caption, and submit. To search for users, click search in the navigation bar, type a username, see results appear in real-time, and follow users directly from results. To view followers or following, go to any user profile, click on the follower or following count, and browse the list in the modal that appears.
 
-frontend/
-├── src/
-│   ├── pages/
-│   │   ├── Search.jsx (NEW)
-```
+File Organization
 
-## Notes
+New files have been added including upload middleware, search controller, search routes, and the uploads directory. The frontend now includes a search page component.
 
-- Uploaded images are stored in `backend/uploads/` directory
-- Images are served at `http://localhost:5000/uploads/<filename>`
-- Make sure to create `uploads` directory or it will be created automatically
-- File size limit: 5MB
-- Supported image formats: jpeg, jpg, png, gif, webp
+Stories Feature
 
+Users can create stories by uploading images from their device or using image URLs. Stories automatically expire after 24 hours. Stories appear in a sidebar feed showing stories from users you follow. Users can view stories in a full-screen viewer with navigation. Stories can be shared from existing posts using a share button. Stories can be converted to highlights for permanent display on profiles.
+
+Highlights Feature
+
+Users can save their stories as highlights with custom titles. Highlights appear on user profiles below the profile information. Each highlight shows a cover image and story count. Highlights can be viewed by clicking on them. Highlights can be deleted by the owner.
+
+Search and Suggestions
+
+Search functionality includes real-time username search. Search history is stored locally and can be reused. Recent searches appear when the search box is empty. Explore button shows user suggestions of people you don't follow. Suggestions can be followed directly from the sidebar. Search results show follow status for each user.
+
+UI Improvements
+
+Sidebars have been added to both sides of the main content area. Left sidebar shows stories feed and quick action buttons. Right sidebar displays user suggestions and profile card. Sidebars are hidden on mobile devices for better responsiveness. Upload method selection has improved styling with active states. Share button uses Instagram-style paper plane icon. Profile page displays highlights in a horizontal scrollable list.
+
+Important Information
+
+Uploaded images are stored in the backend uploads directory. Images are accessible through the uploads URL path. The uploads directory is created automatically if it doesn't exist. File size is limited to 5MB. Supported image formats include common types like jpeg, jpg, png, gif, and webp. Stories expire after 24 hours automatically. Highlights are permanent collections of stories.

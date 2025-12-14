@@ -1,101 +1,31 @@
-# Quick Setup Guide
+Quick Start Guide
 
-## Prerequisites
-- Node.js (v14 or higher) installed
-- MongoDB running locally or MongoDB Atlas account
-- npm or yarn package manager
+Before you begin, ensure you have Node.js installed and MongoDB running on your system. You'll also need a package manager like npm or yarn.
 
-## Step-by-Step Setup
+Backend Setup
 
-### 1. Backend Setup
+Go to the backend directory and install dependencies. Create a .env file with your configuration settings including the database connection and secret keys. Start MongoDB if running locally. Launch the backend server using npm start. The server will be available at the configured port.
 
-```bash
-# Navigate to backend directory
-cd backend
+Frontend Setup
 
-# Install dependencies
-npm install
+Open a new terminal window and navigate to the frontend directory. Install all required packages. Start the development server. The application will open automatically in your browser.
 
-# Create .env file (copy from .env.example if available, or create manually)
-# Add the following content:
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/instagram-clone
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-NODE_ENV=development
+Using the Application
 
-# Start MongoDB (if running locally)
-# On Windows: Make sure MongoDB service is running
-# On Mac/Linux: mongod
+Open your browser and navigate to the frontend URL. Create a new account by signing up. Once logged in, you can start creating posts, following users, and interacting with content.
 
-# Start the backend server
-npm start
-```
+Common Issues
 
-Backend will run on `http://localhost:5000`
+If you see database connection errors, verify that MongoDB is running and the connection string is correct. For port conflicts, change the port number in the configuration. CORS errors usually mean the backend isn't running or isn't configured properly. Authentication problems can often be solved by clearing browser storage and checking token configuration.
 
-### 2. Frontend Setup
+Testing
 
-Open a new terminal:
+You can test the API using tools like Postman or curl commands. Check the main README for example API requests. The browser developer tools network tab is also useful for debugging API calls.
 
-```bash
-# Navigate to frontend directory
-cd frontend
+Default Settings
 
-# Install dependencies
-npm install
+The backend typically runs on port 5000. The frontend runs on port 3000. The default database connection points to a local MongoDB instance. These can be changed in the configuration files.
 
-# Start the development server
-npm run dev
-```
+Next Steps
 
-Frontend will run on `http://localhost:3000`
-
-### 3. Access the Application
-
-1. Open your browser and go to `http://localhost:3000`
-2. Sign up for a new account
-3. Create posts, follow users, like and comment!
-
-## Troubleshooting
-
-### MongoDB Connection Error
-- Make sure MongoDB is running
-- Check if the MONGODB_URI in .env is correct
-- For MongoDB Atlas, use the connection string provided
-
-### Port Already in Use
-- Change the PORT in backend/.env
-- Update the baseURL in frontend/src/api/axios.js to match
-
-### CORS Errors
-- Make sure backend is running before frontend
-- Check that CORS is enabled in backend/src/app.js
-
-### Authentication Issues
-- Clear localStorage in browser
-- Make sure JWT_SECRET is set in backend/.env
-- Check browser console for errors
-
-## Testing the APIs
-
-You can test the APIs using:
-- Postman
-- curl commands (see README.md)
-- Browser DevTools Network tab
-
-## Default Configuration
-
-- Backend: `http://localhost:5000`
-- Frontend: `http://localhost:3000`
-- MongoDB: `mongodb://localhost:27017/instagram-clone`
-
-## Next Steps
-
-1. Create your first account
-2. Create a post with an image URL
-3. Follow other users (create multiple accounts)
-4. View your feed
-5. Like and comment on posts
-
-Enjoy building! 
-
+After setup, create your first account. Upload a post with an image. Find and follow other users. Explore the feed to see posts from people you follow. Try liking and commenting on posts.

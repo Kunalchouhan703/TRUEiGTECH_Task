@@ -8,8 +8,11 @@ import CreatePost from './pages/CreatePost';
 import Profile from './pages/Profile';
 import Search from './pages/Search';
 import PostDetail from './pages/PostDetail';
+import CreateStory from './pages/CreateStory';
+import StoryViewer from './pages/StoryViewer';
 
 import Navbar from './components/Navbar';
+import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -51,7 +54,9 @@ function App() {
             <ProtectedRoute>
               <>
                 <Navbar />
-                <Feed />
+                <Layout>
+                  <Feed />
+                </Layout>
               </>
             </ProtectedRoute>
           }
@@ -62,7 +67,9 @@ function App() {
             <ProtectedRoute>
               <>
                 <Navbar />
-                <CreatePost />
+                <Layout>
+                  <CreatePost />
+                </Layout>
               </>
             </ProtectedRoute>
           }
@@ -73,7 +80,9 @@ function App() {
             <ProtectedRoute>
               <>
                 <Navbar />
-                <Profile />
+                <Layout>
+                  <Profile />
+                </Layout>
               </>
             </ProtectedRoute>
           }
@@ -84,7 +93,9 @@ function App() {
             <ProtectedRoute>
               <>
                 <Navbar />
-                <Search />
+                <Layout>
+                  <Search />
+                </Layout>
               </>
             </ProtectedRoute>
           }
@@ -95,8 +106,31 @@ function App() {
             <ProtectedRoute>
               <>
                 <Navbar />
-                <PostDetail />
+                <Layout>
+                  <PostDetail />
+                </Layout>
               </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stories/create"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <Layout>
+                  <CreateStory />
+                </Layout>
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stories/:userId"
+          element={
+            <ProtectedRoute>
+              <StoryViewer />
             </ProtectedRoute>
           }
         />

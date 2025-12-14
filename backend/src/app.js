@@ -9,6 +9,8 @@ import userRoutes from './routes/user.routes.js';
 import postRoutes from './routes/post.routes.js';
 import feedRoutes from './routes/feed.routes.js';
 import searchRoutes from './routes/search.routes.js';
+import storyRoutes from './routes/story.routes.js';
+import highlightRoutes from './routes/highlight.routes.js';
 
 dotenv.config();
 
@@ -27,6 +29,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/feed', feedRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/stories', storyRoutes);
+app.use('/api/highlights', highlightRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ 

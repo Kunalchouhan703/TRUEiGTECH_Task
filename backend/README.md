@@ -1,60 +1,13 @@
-# Instagram Clone Backend
+Backend Server Documentation
 
-Node.js + Express backend for Instagram Mini Clone.
+This is the server component of the Instagram clone application. It handles all the backend logic including user authentication, database operations, and API endpoints.
 
-## Setup
+Setup Process
 
-1. Install dependencies:
-```bash
-npm install
-```
+Install all required packages by running npm install in this directory. Create a .env file with your configuration including the database connection string and JWT secret key. Make sure MongoDB is running before starting the server. Use npm start to run the server or npm run dev for development with automatic reloading.
 
-2. Create a `.env` file in the backend directory:
-```
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/instagram-clone
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-NODE_ENV=development
-```
+Available Endpoints
 
-3. Make sure MongoDB is running on your system.
+Authentication endpoints allow users to create accounts and log in. User endpoints provide profile information, follow functionality, and profile updates. Post endpoints handle creating posts, interactions like likes and comments, sharing as stories, editing captions, and deleting posts. Story endpoints manage story creation, viewing stories from followed users, and story deletion. Highlight endpoints allow creating highlights from stories and viewing highlight collections. Feed endpoint returns posts from followed users. Search endpoints help users find other accounts and get user suggestions.
 
-4. Start the server:
-```bash
-npm start
-```
-
-For development with auto-reload:
-```bash
-npm run dev
-```
-
-The server will run on http://localhost:5000
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/signup` - Sign up
-- `POST /api/auth/login` - Log in
-
-### Users
-- `GET /api/users/:userId` - Get user profile
-- `POST /api/users/:targetUserId/follow` - Follow a user
-- `POST /api/users/:targetUserId/unfollow` - Unfollow a user
-
-### Posts
-- `POST /api/posts` - Create a post
-- `GET /api/posts/user/:userId` - Get user's posts
-- `POST /api/posts/:postId/like` - Like a post
-- `POST /api/posts/:postId/unlike` - Unlike a post
-- `POST /api/posts/:postId/comment` - Add comment
-- `GET /api/posts/:postId/comments` - Get comments
-
-### Feed
-- `GET /api/feed` - Get feed (posts from followed users)
-
-All routes except auth require authentication token in header:
-```
-Authorization: Bearer <token>
-```
-
+All protected endpoints require authentication. Include the JWT token in the Authorization header as Bearer token when making requests to these endpoints.

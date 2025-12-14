@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
-const CreatePost = () => {
+const CreateStory = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [caption, setCaption] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploadMethod, setUploadMethod] = useState('file');
@@ -54,23 +53,21 @@ const CreatePost = () => {
       if (uploadMethod === 'file' && imageFile) {
         const formData = new FormData();
         formData.append('image', imageFile);
-        formData.append('caption', caption);
 
-        await api.post('/posts', formData, {
+        await api.post('/stories', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
       } else {
-        await api.post('/posts', {
-          imageUrl,
-          caption
+        await api.post('/stories', {
+          imageUrl
         });
       }
 
       navigate('/feed');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create post');
+      setError(err.response?.data?.message || 'Failed to create story');
     } finally {
       setLoading(false);
     }
@@ -78,7 +75,7 @@ const CreatePost = () => {
 
   return (
     <div className="create-post-container">
-      <h1>Create New Post</h1>
+      <h1>Create Story</h1>
       <div className="create-post-form">
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -143,23 +140,13 @@ const CreatePost = () => {
             </div>
           )}
 
-          <div className="form-group">
-            <label className="form-label">Caption</label>
-            <textarea
-              className="form-textarea"
-              placeholder="Write a caption..."
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              maxLength={500}
-            />
-          </div>
           {error && <div className="error-message">{error}</div>}
           <button
             type="submit"
             className="submit-button"
             disabled={loading}
           >
-            {loading ? 'Creating...' : 'Create Post'}
+            {loading ? 'Creating...' : 'Create Story'}
           </button>
         </form>
       </div>
@@ -167,4 +154,5 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default CreateStory;
+

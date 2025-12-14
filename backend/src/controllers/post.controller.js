@@ -1,6 +1,7 @@
 import Post from '../models/Post.js';
 import Comment from '../models/Comment.js';
 import User from '../models/User.js';
+import Story from '../models/Story.js';
 
 export const createPost = async (req, res) => {
   try {
@@ -398,6 +399,49 @@ export const getUserPosts = async (req, res) => {
     });
   } catch (error) {
     console.error('Get user posts error:', error);
+    res.status(500).json({ 
+      message: 'Server error' 
+    });
+  }
+};
+
+export const sharePostAsStory = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ 
+        message: 'Post not found' 
+      });
+    }
+
+    const story = new Story({
+      user: userId,
+      imageUrl: post.imageUrl,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    });
+
+    await story.save();
+
+    await story.populate('user', 'username profilePhoto');
+
+    res.status(201).json({
+      message: 'Post shared as story successfully',
+      story: {
+        id: story._id,
+        user: {
+          id: story.user._id,
+          username: story.user.username,
+          profilePhoto: story.user.profilePhoto
+        },
+        imageUrl: story.imageUrl,
+        createdAt: story.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Share post as story error:', error);
     res.status(500).json({ 
       message: 'Server error' 
     });
