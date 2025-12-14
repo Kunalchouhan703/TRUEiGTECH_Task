@@ -21,7 +21,6 @@ const Search = () => {
         const response = await api.get(`/search/users?query=${encodeURIComponent(query)}`);
         setUsers(response.data.users);
         
-        // Initialize following states
         const states = {};
         response.data.users.forEach(user => {
           states[user.id] = user.isFollowing;
@@ -34,7 +33,6 @@ const Search = () => {
       }
     };
 
-    // Debounce search
     const timeoutId = setTimeout(searchUsers, 300);
     return () => clearTimeout(timeoutId);
   }, [query]);
@@ -47,7 +45,6 @@ const Search = () => {
         await api.post(`/users/${userId}/follow`);
       }
       
-      // Update following state
       setFollowingStates(prev => ({
         ...prev,
         [userId]: !isFollowing
@@ -138,4 +135,3 @@ const Search = () => {
 };
 
 export default Search;
-

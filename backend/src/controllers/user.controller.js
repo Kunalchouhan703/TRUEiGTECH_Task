@@ -1,36 +1,16 @@
-/**
- * User Controller
- * 
- * Handles user-related operations:
- * - Follow/Unfollow users
- * - Get user profile
- * - Update user profile
- */
-
 import User from '../models/User.js';
 
-/**
- * Follow a User
- * 
- * Adds target user to current user's following list
- * and adds current user to target user's followers list.
- * 
- * @route POST /api/users/:targetUserId/follow
- * @access Private
- */
 export const followUser = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
-    const { targetUserId } = req.params; // User to follow
+    const { userId } = req;
+    const { targetUserId } = req.params;
 
-    // Prevent users from following themselves
     if (userId === targetUserId) {
       return res.status(400).json({ 
         message: 'You cannot follow yourself' 
       });
     }
 
-    // Check if target user exists
     const targetUser = await User.findById(targetUserId);
     if (!targetUser) {
       return res.status(404).json({ 
@@ -38,21 +18,17 @@ export const followUser = async (req, res) => {
       });
     }
 
-    // Get current user
     const currentUser = await User.findById(userId);
 
-    // Check if already following
     if (currentUser.following.includes(targetUserId)) {
       return res.status(400).json({ 
         message: 'You are already following this user' 
       });
     }
 
-    // Add target user to current user's following list
     currentUser.following.push(targetUserId);
     await currentUser.save();
 
-    // Add current user to target user's followers list
     targetUser.followers.push(userId);
     await targetUser.save();
 
@@ -67,21 +43,11 @@ export const followUser = async (req, res) => {
   }
 };
 
-/**
- * Unfollow a User
- * 
- * Removes target user from current user's following list
- * and removes current user from target user's followers list.
- * 
- * @route POST /api/users/:targetUserId/unfollow
- * @access Private
- */
 export const unfollowUser = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
-    const { targetUserId } = req.params; // User to unfollow
+    const { userId } = req;
+    const { targetUserId } = req.params;
 
-    // Get both users
     const currentUser = await User.findById(userId);
     const targetUser = await User.findById(targetUserId);
 
@@ -91,20 +57,17 @@ export const unfollowUser = async (req, res) => {
       });
     }
 
-    // Check if currently following
     if (!currentUser.following.includes(targetUserId)) {
       return res.status(400).json({ 
         message: 'You are not following this user' 
       });
     }
 
-    // Remove target user from current user's following list
     currentUser.following = currentUser.following.filter(
       id => id.toString() !== targetUserId
     );
     await currentUser.save();
 
-    // Remove current user from target user's followers list
     targetUser.followers = targetUser.followers.filter(
       id => id.toString() !== userId
     );
@@ -121,23 +84,13 @@ export const unfollowUser = async (req, res) => {
   }
 };
 
-/**
- * Get User Profile
- * 
- * Retrieves user profile information including followers, following,
- * profile photo, and bio.
- * 
- * @route GET /api/users/:userId
- * @access Private
- */
 export const getUserProfile = async (req, res) => {
   try {
-    const { userId } = req.params; // Target user ID
-    const currentUserId = req.userId; // Current logged-in user
+    const { userId } = req.params;
+    const currentUserId = req.userId;
 
-    // Find user and populate followers/following
     const user = await User.findById(userId)
-      .select('-password') // Exclude password from response
+      .select('-password')
       .populate('followers', 'username')
       .populate('following', 'username');
 
@@ -147,12 +100,10 @@ export const getUserProfile = async (req, res) => {
       });
     }
 
-    // Check if current user is following this user
     const isFollowing = user.followers.some(
       follower => follower._id.toString() === currentUserId
     );
 
-    // Return formatted user data
     res.status(200).json({
       user: {
         id: user._id,
@@ -182,23 +133,11 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-/**
- * Update User Profile
- * 
- * Updates current user's profile information:
- * - Username (with uniqueness check)
- * - Bio
- * - Profile photo (if uploaded)
- * 
- * @route PUT /api/users/profile
- * @access Private
- */
 export const updateProfile = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
     const { username, bio } = req.body;
 
-    // Find current user
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ 
@@ -206,9 +145,7 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Update username if provided and different
     if (username && username !== user.username) {
-      // Check if username is already taken by another user
       const existingUser = await User.findOne({ 
         username, 
         _id: { $ne: userId } 
@@ -223,21 +160,16 @@ export const updateProfile = async (req, res) => {
       user.username = username;
     }
 
-    // Update bio if provided
     if (bio !== undefined) {
       user.bio = bio.trim();
     }
 
-    // Handle profile photo upload
     if (req.file) {
-      // Generate full URL for uploaded image
       user.profilePhoto = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
-    // Save updated user
     await user.save();
 
-    // Return updated user data
     res.status(200).json({
       message: 'Profile updated successfully',
       user: {

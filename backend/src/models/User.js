@@ -1,26 +1,6 @@
-/**
- * User Model
- * 
- * Defines the User schema for MongoDB.
- * Handles user authentication, profile information, and social connections.
- */
-
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-/**
- * User Schema
- * 
- * Fields:
- * - username: Unique username (3-30 characters)
- * - email: Unique email address
- * - password: Hashed password (min 6 characters)
- * - followers: Array of User IDs who follow this user
- * - following: Array of User IDs this user follows
- * - profilePhoto: URL to profile photo
- * - bio: User bio/description (max 150 characters)
- * - createdAt: Account creation timestamp
- */
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -42,7 +22,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false // Don't return password in queries by default
+    select: false
   },
   followers: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -67,18 +47,12 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-/**
- * Pre-save hook: Hash password before saving
- * Only hashes if password is modified (not on every save)
- */
 userSchema.pre('save', async function(next) {
-  // Skip if password is not modified
   if (!this.isModified('password')) {
     return next();
   }
   
   try {
-    // Generate salt and hash password
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -87,17 +61,10 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-/**
- * Instance method: Compare password with hashed password
- * 
- * @param {string} candidatePassword - Password to compare
- * @returns {Promise<boolean>} - True if passwords match
- */
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Create and export User model
 const User = mongoose.model('User', userSchema);
 
 export default User;

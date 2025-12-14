@@ -6,8 +6,8 @@ const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [commentTexts, setCommentTexts] = useState({}); // Store comment input for each post
-  const [comments, setComments] = useState({}); // Store comments for each post
+  const [commentTexts, setCommentTexts] = useState({});
+  const [comments, setComments] = useState({});
   const [loadingComments, setLoadingComments] = useState({});
   const navigate = useNavigate();
 
@@ -23,7 +23,6 @@ const Feed = () => {
       const response = await api.get('/feed');
       setPosts(response.data.posts);
       
-      // Initialize comment texts and fetch comments for each post
       const initialCommentTexts = {};
       response.data.posts.forEach(post => {
         initialCommentTexts[post.id] = '';
@@ -37,7 +36,7 @@ const Feed = () => {
   };
 
   const fetchComments = async (postId) => {
-    if (comments[postId]) return; // Already loaded
+    if (comments[postId]) return;
 
     try {
       setLoadingComments(prev => ({ ...prev, [postId]: true }));
@@ -58,7 +57,6 @@ const Feed = () => {
         await api.post(`/posts/${postId}/like`);
       }
       
-      // Update post in state
       setPosts(prevPosts =>
         prevPosts.map(post => {
           if (post.id === postId) {
@@ -83,13 +81,11 @@ const Feed = () => {
     try {
       const response = await api.post(`/posts/${postId}/comment`, { text });
       
-      // Add comment to state
       setComments(prev => ({
         ...prev,
         [postId]: [response.data.comment, ...(prev[postId] || [])]
       }));
       
-      // Clear input
       setCommentTexts(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
       console.error('Failed to add comment:', err);

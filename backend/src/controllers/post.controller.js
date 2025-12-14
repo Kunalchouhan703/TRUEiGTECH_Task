@@ -1,39 +1,17 @@
-/**
- * Post Controller
- * 
- * Handles all post-related operations:
- * - Create, read, update, delete posts
- * - Like/unlike posts
- * - Add, get, delete comments
- * - Get user's posts
- */
-
 import Post from '../models/Post.js';
 import Comment from '../models/Comment.js';
 import User from '../models/User.js';
 
-/**
- * Create a New Post
- * 
- * Creates a new post with image (from file upload or URL) and optional caption.
- * Supports both file uploads and image URLs.
- * 
- * @route POST /api/posts
- * @access Private
- */
 export const createPost = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
     
-    // Support both file upload and URL
     let imageUrl = req.body.imageUrl;
     
-    // If file was uploaded, generate full URL
     if (req.file) {
       imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
-    // Validate that image URL or file is provided
     if (!imageUrl) {
       return res.status(400).json({ 
         message: 'Image URL or file is required' 
@@ -42,7 +20,6 @@ export const createPost = async (req, res) => {
 
     const caption = req.body.caption || '';
 
-    // Create new post
     const post = new Post({
       user: userId,
       imageUrl,
@@ -52,10 +29,8 @@ export const createPost = async (req, res) => {
 
     await post.save();
 
-    // Populate user information
     await post.populate('user', 'username');
 
-    // Return created post
     res.status(201).json({
       message: 'Post created successfully',
       post: {
@@ -79,21 +54,11 @@ export const createPost = async (req, res) => {
   }
 };
 
-/**
- * Like a Post
- * 
- * Adds current user to post's likes array.
- * Prevents duplicate likes.
- * 
- * @route POST /api/posts/:postId/like
- * @access Private
- */
 export const likePost = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
     const { postId } = req.params;
 
-    // Find post
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ 
@@ -101,14 +66,12 @@ export const likePost = async (req, res) => {
       });
     }
 
-    // Check if already liked (prevent duplicate likes)
     if (post.likes.includes(userId)) {
       return res.status(400).json({ 
         message: 'Post already liked' 
       });
     }
 
-    // Add user to likes array
     post.likes.push(userId);
     await post.save();
 
@@ -124,20 +87,11 @@ export const likePost = async (req, res) => {
   }
 };
 
-/**
- * Unlike a Post
- * 
- * Removes current user from post's likes array.
- * 
- * @route POST /api/posts/:postId/unlike
- * @access Private
- */
 export const unlikePost = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
     const { postId } = req.params;
 
-    // Find post
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ 
@@ -145,14 +99,12 @@ export const unlikePost = async (req, res) => {
       });
     }
 
-    // Check if post is liked
     if (!post.likes.includes(userId)) {
       return res.status(400).json({ 
         message: 'Post not liked yet' 
       });
     }
 
-    // Remove user from likes array
     post.likes = post.likes.filter(
       id => id.toString() !== userId
     );
@@ -170,28 +122,18 @@ export const unlikePost = async (req, res) => {
   }
 };
 
-/**
- * Add Comment to a Post
- * 
- * Creates a new comment on a post.
- * 
- * @route POST /api/posts/:postId/comment
- * @access Private
- */
 export const addComment = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
     const { postId } = req.params;
     const { text } = req.body;
 
-    // Validate comment text
     if (!text || text.trim() === '') {
       return res.status(400).json({ 
         message: 'Comment text is required' 
       });
     }
 
-    // Check if post exists
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ 
@@ -199,7 +141,6 @@ export const addComment = async (req, res) => {
       });
     }
 
-    // Create new comment
     const comment = new Comment({
       user: userId,
       post: postId,
@@ -208,10 +149,8 @@ export const addComment = async (req, res) => {
 
     await comment.save();
 
-    // Populate user information
     await comment.populate('user', 'username');
 
-    // Return created comment
     res.status(201).json({
       message: 'Comment added successfully',
       comment: {
@@ -232,21 +171,11 @@ export const addComment = async (req, res) => {
   }
 };
 
-/**
- * Get Comments for a Post
- * 
- * Retrieves all comments for a specific post, sorted by newest first.
- * Includes ownership information for frontend permissions.
- * 
- * @route GET /api/posts/:postId/comments
- * @access Private
- */
 export const getComments = async (req, res) => {
   try {
     const { postId } = req.params;
-    const currentUserId = req.userId; // Current logged-in user
+    const currentUserId = req.userId;
 
-    // Check if post exists
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ 
@@ -254,12 +183,10 @@ export const getComments = async (req, res) => {
       });
     }
 
-    // Get all comments for this post (newest first)
     const comments = await Comment.find({ post: postId })
       .populate('user', 'username')
       .sort({ createdAt: -1 });
 
-    // Return comments with ownership information
     res.status(200).json({
       comments: comments.map(comment => ({
         id: comment._id,
@@ -281,20 +208,11 @@ export const getComments = async (req, res) => {
   }
 };
 
-/**
- * Delete a Comment
- * 
- * Deletes a comment. Only comment owner or post owner can delete.
- * 
- * @route DELETE /api/posts/comments/:commentId
- * @access Private
- */
 export const deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
 
-    // Find comment and populate post information
     const comment = await Comment.findById(commentId).populate('post', 'user');
     
     if (!comment) {
@@ -303,7 +221,6 @@ export const deleteComment = async (req, res) => {
       });
     }
 
-    // Check permissions: comment owner OR post owner can delete
     const isCommentOwner = comment.user.toString() === userId;
     const isPostOwner = comment.post.user.toString() === userId;
 
@@ -313,7 +230,6 @@ export const deleteComment = async (req, res) => {
       });
     }
 
-    // Delete the comment
     await Comment.findByIdAndDelete(commentId);
 
     res.status(200).json({ 
@@ -327,28 +243,18 @@ export const deleteComment = async (req, res) => {
   }
 };
 
-/**
- * Update Post Caption
- * 
- * Updates the caption of a post. Only post owner can update.
- * 
- * @route PUT /api/posts/:postId/caption
- * @access Private
- */
 export const updatePostCaption = async (req, res) => {
   try {
     const { postId } = req.params;
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
     const { caption } = req.body;
 
-    // Validate input
     if (caption === undefined) {
       return res.status(400).json({ 
         message: 'Caption is required' 
       });
     }
 
-    // Find post
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ 
@@ -356,14 +262,12 @@ export const updatePostCaption = async (req, res) => {
       });
     }
 
-    // Check if user owns the post
     if (post.user.toString() !== userId) {
       return res.status(403).json({ 
         message: 'You can only edit your own posts' 
       });
     }
 
-    // Update caption
     post.caption = caption.trim();
     await post.save();
 
@@ -382,21 +286,11 @@ export const updatePostCaption = async (req, res) => {
   }
 };
 
-/**
- * Get a Single Post by ID
- * 
- * Retrieves detailed information about a specific post,
- * including user info, likes, and ownership status.
- * 
- * @route GET /api/posts/:postId
- * @access Private
- */
 export const getPostById = async (req, res) => {
   try {
     const { postId } = req.params;
-    const currentUserId = req.userId; // Current logged-in user
+    const currentUserId = req.userId;
 
-    // Find post and populate user and likes
     const post = await Post.findById(postId)
       .populate('user', 'username')
       .populate('likes', 'username');
@@ -407,7 +301,6 @@ export const getPostById = async (req, res) => {
       });
     }
 
-    // Return formatted post data
     res.status(200).json({
       post: {
         id: post._id,
@@ -435,21 +328,11 @@ export const getPostById = async (req, res) => {
   }
 };
 
-/**
- * Delete a Post
- * 
- * Deletes a post and all associated comments.
- * Only post owner can delete.
- * 
- * @route DELETE /api/posts/:postId
- * @access Private
- */
 export const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
 
-    // Find post
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ 
@@ -457,17 +340,14 @@ export const deletePost = async (req, res) => {
       });
     }
 
-    // Check if user owns the post
     if (post.user.toString() !== userId) {
       return res.status(403).json({ 
         message: 'You can only delete your own posts' 
       });
     }
 
-    // Delete all comments associated with this post
     await Comment.deleteMany({ post: postId });
 
-    // Delete the post
     await Post.findByIdAndDelete(postId);
 
     res.status(200).json({ 
@@ -481,21 +361,11 @@ export const deletePost = async (req, res) => {
   }
 };
 
-/**
- * Get User's Posts
- * 
- * Retrieves all posts created by a specific user,
- * sorted by newest first.
- * 
- * @route GET /api/posts/user/:userId
- * @access Private
- */
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const currentUserId = req.userId; // Current logged-in user
+    const currentUserId = req.userId;
 
-    // Check if user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ 
@@ -503,13 +373,11 @@ export const getUserPosts = async (req, res) => {
       });
     }
 
-    // Get all posts by this user (newest first)
     const posts = await Post.find({ user: userId })
       .populate('user', 'username')
       .populate('likes', 'username')
       .sort({ createdAt: -1 });
 
-    // Return formatted posts
     res.status(200).json({
       posts: posts.map(post => ({
         id: post._id,

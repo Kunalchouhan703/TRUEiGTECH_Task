@@ -9,27 +9,24 @@ const CreatePost = () => {
   const [caption, setCaption] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [uploadMethod, setUploadMethod] = useState('file'); // 'file' or 'url'
+  const [uploadMethod, setUploadMethod] = useState('file');
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setError('Please select an image file');
         return;
       }
-      // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('Image size must be less than 5MB');
         return;
       }
       setImageFile(file);
-      setImageUrl(''); // Clear URL when file is selected
+      setImageUrl('');
       setError('');
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -42,7 +39,6 @@ const CreatePost = () => {
     e.preventDefault();
     setError('');
     
-    // Validate
     if (uploadMethod === 'file' && !imageFile) {
       setError('Please select an image file');
       return;
@@ -56,7 +52,6 @@ const CreatePost = () => {
 
     try {
       if (uploadMethod === 'file' && imageFile) {
-        // Upload file using FormData
         const formData = new FormData();
         formData.append('image', imageFile);
         formData.append('caption', caption);
@@ -67,14 +62,12 @@ const CreatePost = () => {
           }
         });
       } else {
-        // Upload using URL
         await api.post('/posts', {
           imageUrl,
           caption
         });
       }
 
-      // Redirect to feed
       navigate('/feed');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create post');
@@ -175,4 +168,3 @@ const CreatePost = () => {
 };
 
 export default CreatePost;
-

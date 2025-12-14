@@ -58,7 +58,6 @@ const PostDetail = () => {
         await api.post(`/posts/${postId}/like`);
       }
       
-      // Refresh post to get updated likes list
       await fetchPost();
     } catch (err) {
       console.error('Failed to like/unlike:', err);
@@ -72,10 +71,8 @@ const PostDetail = () => {
     try {
       const response = await api.post(`/posts/${postId}/comment`, { text });
       
-      // Refresh comments to get updated list with ownership info
       await fetchComments();
       
-      // Clear input
       setCommentText('');
     } catch (err) {
       console.error('Failed to add comment:', err);
@@ -90,7 +87,6 @@ const PostDetail = () => {
     try {
       await api.delete(`/posts/comments/${commentId}`);
       
-      // Refresh comments
       await fetchComments();
     } catch (err) {
       console.error('Failed to delete comment:', err);
@@ -108,7 +104,6 @@ const PostDetail = () => {
       setSavingCaption(true);
       await api.put(`/posts/${postId}/caption`, { caption: captionText.trim() });
       
-      // Update post
       setPost(prev => ({ ...prev, caption: captionText.trim() }));
       setEditingCaption(false);
     } catch (err) {
@@ -128,7 +123,6 @@ const PostDetail = () => {
       setDeleting(true);
       await api.delete(`/posts/${postId}`);
       
-      // Redirect to feed
       navigate('/feed');
     } catch (err) {
       console.error('Failed to delete post:', err);

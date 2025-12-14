@@ -1,27 +1,10 @@
-/**
- * Feed Controller
- * 
- * Handles feed-related operations.
- * Feed shows posts from users that the current user follows.
- */
-
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 
-/**
- * Get Feed
- * 
- * Retrieves posts from users that the current user follows.
- * Posts are sorted by newest first and limited to 50 for performance.
- * 
- * @route GET /api/feed
- * @access Private
- */
 export const getFeed = async (req, res) => {
   try {
-    const { userId } = req; // Current user (from auth middleware)
+    const { userId } = req;
 
-    // Get current user with following list
     const currentUser = await User.findById(userId);
     if (!currentUser) {
       return res.status(404).json({ 
@@ -29,18 +12,14 @@ export const getFeed = async (req, res) => {
       });
     }
 
-    // Get posts from users that current user follows
-    // Using $in operator for efficient querying
-    // Sorted by newest first, limited to 50 posts
     const posts = await Post.find({
       user: { $in: currentUser.following }
     })
-      .populate('user', 'username') // Populate user info
-      .populate('likes', 'username') // Populate likes info
-      .sort({ createdAt: -1 }) // Newest first
-      .limit(50); // Limit for performance
+      .populate('user', 'username')
+      .populate('likes', 'username')
+      .sort({ createdAt: -1 })
+      .limit(50);
 
-    // Return formatted posts with like status
     res.status(200).json({
       posts: posts.map(post => ({
         id: post._id,

@@ -83,19 +83,16 @@ const Profile = () => {
   const handleProfilePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
-      // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Image size must be less than 5MB');
         return;
       }
       setEditProfilePhoto(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfilePhotoPreview(reader.result);
@@ -121,7 +118,6 @@ const Profile = () => {
         }
       });
 
-      // Update profile state
       setProfile(prev => ({
         ...prev,
         username: response.data.user.username,
@@ -129,7 +125,6 @@ const Profile = () => {
         profilePhoto: response.data.user.profilePhoto
       }));
 
-      // Update local storage if it's current user
       if (isOwnProfile) {
         const updatedUser = { ...currentUser, username: response.data.user.username };
         localStorage.setItem('user', JSON.stringify(updatedUser));
